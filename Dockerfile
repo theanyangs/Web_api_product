@@ -1,21 +1,14 @@
-# Start from Java 17 (adjust if needed)
-FROM openjdk:17-jdk-slim
+# Use official OpenJDK 17
+FROM openjdk:17-jdk-slim-bullseye
 
-# Set workdir
+# Set working directory
 WORKDIR /app
 
-# Copy Gradle wrapper and build files
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
-COPY src src
+# Copy only the built JAR
+COPY build/libs/web-api-product-0.0.1-SNAPSHOT.jar app.jar
 
-# Make Gradle wrapper executable
-RUN chmod +x ./gradlew
+# Expose port (Render will map PORT automatically)
+EXPOSE 8080
 
-# Build the project
-RUN ./gradlew build -x test
-
-# Run the jar
-CMD ["java", "-jar", "build/libs/web-api-product-0.0.1-SNAPSHOT.jar"]
+# Run the app
+ENTRYPOINT ["java","-jar","app.jar"]
