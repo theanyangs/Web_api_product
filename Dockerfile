@@ -1,25 +1,14 @@
-# Stage 1: build
-FROM gradle:9.2.1-jdk21 AS build
+
+# Stage 1: Build
+FROM gradle:8-jdk21 AS build
 WORKDIR /app
-
-# Copy only Gradle build files first to cache dependencies
-COPY build.gradle settings.gradle ./
-COPY gradle ./gradle
-
-# Download dependencies
-
-# Now copy the full source code
 COPY . .
+RUN chmod +x ./gradlew
+RUN ./gradlew clean bootJar -x test --no-daemon
 
-# Build jar
-
-# Stage 2: runtime
-FROM eclipse-temurin:21-jre
+# Stage 2: Runtime
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
-
-# Copy jar from build stage
-COPY --from=build /app/build/libs/*.jar app.jar
-
+COPY --from=build /app/build/libs/web-api-product-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
