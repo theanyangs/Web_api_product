@@ -14,6 +14,9 @@ COPY . .
 
 # Build jar
 RUN ./gradlew clean bootJar -x test --no-daemon
+# Make gradlew executable
+RUN chmod +x ./gradlew
+
 
 # Stage 2: runtime
 FROM eclipse-temurin:21-jre
