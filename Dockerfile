@@ -7,23 +7,18 @@ COPY build.gradle settings.gradle ./
 COPY gradle ./gradle
 
 # Download dependencies
-RUN gradle build -x test --no-daemon || true
 
 # Now copy the full source code
 COPY . .
 
 # Build jar
-RUN ./gradlew clean bootJar -x test --no-daemon
-# Make gradlew executable
-RUN chmod +x ./gradlew
-
 
 # Stage 2: runtime
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy jar from build stage
-COPY --from=build /app/build/libs/web-api-product-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
